@@ -7,12 +7,13 @@ import {
   DragOverlay,
   DragStartEvent,
   PointerSensor,
+  pointerWithin,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
 import { LayoutGroup, motion } from "framer-motion";
 import throttle from "lodash/throttle";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo } from "react";
 import Pow from "./blocks/pow";
 import Wow from "./blocks/wow";
 import Draggable from "./draggable";
@@ -21,8 +22,7 @@ import Sortable from "./sortable";
 import { isContainer, useEditorStore, type TreeNode } from "./store";
 
 export default function Editor() {
-  const { tree, addNode, moveNode, findNode, findDropTarget, findParent } = useEditorStore();
-  const [activeId, setActiveId] = useState<string | null>(null);
+  const { tree, addNode, moveNode, findNode, findDropTarget, activeId, setActiveId } = useEditorStore();
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -43,13 +43,12 @@ export default function Editor() {
 
   const handleDragStart = (event: DragStartEvent) => {
     setActiveId(event.active.id as string);
-    // throttledMoveNode.cancel();
+    throttledMoveNode.cancel();
   };
 
   const handleDragOver = useCallback(
     (event: DragOverEvent) => {
       const { active, over } = event;
-      console.log("🔄 Drag Over:", { active: active.id, over: over?.id });
 
       if (!over || active.id === over.id) {
         return;
@@ -59,29 +58,15 @@ export default function Editor() {
         return;
       }
 
-      // Check if moving to a new container
-      const activeParent = findParent(active.id as string);
-      const overNode = findNode(over.id as string);
-
-      if (overNode && activeParent) {
-        let targetParent;
-        if (isContainer(overNode)) {
-          targetParent = overNode;
-        } else {
-          targetParent = findParent(over.id as string);
-        }
-      }
-
       throttledMoveNode(active.id as string, over.id as string);
     },
-    [findParent, findNode]
-    // [throttledMoveNode, findParent, findNode]
+    [throttledMoveNode]
   );
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     setActiveId(null);
-    // throttledMoveNode.cancel();
+    throttledMoveNode.cancel();
 
     if (!over || active.id === over.id) return;
 
@@ -109,7 +94,7 @@ export default function Editor() {
     if (!isContainer(node)) {
       const BlockComponent = node.type === "pow" ? Pow : Wow;
       return (
-        <Sortable key={node.id} id={node.id} activeId={activeId}>
+        <Sortable key={node.id} id={node.id}>
           <BlockComponent />
         </Sortable>
       );
@@ -124,7 +109,13 @@ export default function Editor() {
   };
 
   return (
-    <DndContext sensors={sensors} onDragStart={handleDragStart} onDragOver={handleDragOver} onDragEnd={handleDragEnd}>
+    <DndContext
+      sensors={sensors}
+      collisionDetection={pointerWithin}
+      onDragStart={handleDragStart}
+      onDragOver={handleDragOver}
+      onDragEnd={handleDragEnd}
+    >
       <Draggable id="wow">
         <Wow />
       </Draggable>

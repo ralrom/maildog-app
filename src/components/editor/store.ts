@@ -59,8 +59,9 @@ function findParentById(
 
 type EditorStore = {
   tree: TreeNode;
+  activeId: string | null;
+  setActiveId: (id: string | null) => void;
   findNode: (id: string) => TreeNode | null;
-  findParent: (id: string) => ContainerNode | null;
   findDropTarget: (id: string) => ContainerNode | null;
   addNode: (parentId: string, node: TreeNode, index?: number) => void;
   moveNode: (activeId: string, overId: string) => void;
@@ -87,9 +88,10 @@ export const useEditorStore = create<EditorStore>()(
       ],
     },
 
-    findNode: (id) => findNodeById(get().tree, id),
+    activeId: null,
+    setActiveId: (id) => set({ activeId: id }),
 
-    findParent: (id) => findParentById(get().tree, id),
+    findNode: (id) => findNodeById(get().tree, id),
 
     findDropTarget: (id) => {
       const node = findNodeById(get().tree, id);
