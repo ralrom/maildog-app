@@ -1,6 +1,7 @@
 import { arrayMove } from "@dnd-kit/sortable";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
+import type { Projection } from "./projection";
 
 type ContainerNode = {
   id: string;
@@ -60,7 +61,11 @@ function findParentById(
 type EditorStore = {
   tree: TreeNode;
   activeId: string | null;
+  overId: string | null;
+  projection: Projection;
   setActiveId: (id: string | null) => void;
+  setOverId: (id: string | null) => void;
+  setProjection: (projection: Projection) => void;
   findNode: (id: string) => TreeNode | null;
   findDropTarget: (id: string) => ContainerNode | null;
   addNode: (parentId: string, node: TreeNode, index?: number) => void;
@@ -89,7 +94,11 @@ export const useEditorStore = create<EditorStore>()(
     },
 
     activeId: null,
+    overId: null,
+    projection: null,
     setActiveId: (id) => set({ activeId: id }),
+    setOverId: (id) => set({ overId: id }),
+    setProjection: (projection) => set({ projection }),
 
     findNode: (id) => findNodeById(get().tree, id),
 
