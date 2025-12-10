@@ -7,7 +7,7 @@ export default function Home() {
       hi
       <h1 className="text-5xl font-bold">The quick brown fox jumps over the lazy dog</h1>
       <Button asChild>
-        <Link href="/editor/wqe">Editor </Link>
+        <Link href="/editor/1">Editor </Link>
       </Button>
     </div>
   );
