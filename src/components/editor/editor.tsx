@@ -14,7 +14,7 @@ import {
 } from "@dnd-kit/core";
 import React, { useEffect } from "react";
 import { getBlockComponent } from "./blocks";
-import { PalettePreview } from "./blocks/palette-preview";
+import { BlockPreview } from "./blocks/block-preview";
 import Container from "./container";
 import Sortable from "./dnd/sortable";
 import { TreeNodeData, useEditorState } from "./editor-state";
@@ -106,7 +106,7 @@ export function Block({
   const BlockComponent = block.full;
   const id = prefixId(node.id, prefix);
 
-  return <Sortable id={id}>{usePreview ? <PalettePreview block={block} /> : <BlockComponent node={node} />}</Sortable>;
+  return <Sortable id={id}>{usePreview ? <BlockPreview block={block} /> : <BlockComponent node={node} />}</Sortable>;
 }
 
 export const createRenderTreeNode = (options?: RenderNodeOptions) => {
@@ -257,7 +257,7 @@ export default function Editor() {
     if (!block) {
       return null;
     }
-    return <PalettePreview block={block} />;
+    return <BlockPreview block={block} />;
   };
 
   if (!tree.root) {
@@ -290,7 +290,7 @@ export default function Editor() {
 
         <DragOverlay>
           {activeId?.startsWith("palette::") ? (
-            <PalettePreview block={getBlockComponent(extractNodeId(activeId))!} />
+            <BlockPreview block={getBlockComponent(extractNodeId(activeId))!} />
           ) : activeId ? (
             (() => {
               const node = tree.find(extractNodeId(activeId));

@@ -10,10 +10,10 @@ function BlockHierarchyView({ node }: { node: TreeNode<TreeNodeData> }) {
   const { renderTreeNode } = useRenderContext();
 
   return (
-    <div className="mb-2">
+    <div>
       <Block node={node} prefix="hierarchy" usePreview={true} />
       {node.children.length > 0 && (
-        <div className="pl-4 mt-2 border-l border-border/50 ml-2">
+        <div className="pl-2 mt-2 border-l border-border/50">
           {node.children.map((child) => (
             <div key={child.id} className="mb-1">
               {renderTreeNode(child)}
