@@ -14,11 +14,7 @@ export default function Droppable({ id, items, children }: { id: string; items: 
 
   return (
     <SortableContext items={items} strategy={verticalListSortingStrategy}>
-      <div
-        ref={setNodeRef}
-        style={style}
-        className="flex flex-col gap-2 border border-dashed border-gray-300 min-h-[200px] p-4"
-      >
+      <div ref={setNodeRef} style={style} className="flex flex-col gap-2 border min-h-[200px] p-4">
         {children}
       </div>
     </SortableContext>
